@@ -46,6 +46,13 @@ join employee b
 on b.id = a.chief_id
 and a.salary > b.salary
 
+//any syntax
+
+select a.*
+from   employee a, employee b
+where  b.id = a.chief_id
+and    a.salary > b.salary
+
 
 
 //2 Вывести список сотрудников, получающих максимальную заработную плату в своем отделе
