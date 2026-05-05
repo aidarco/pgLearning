@@ -1,0 +1,86 @@
+create table department (
+    id serial primary key,
+    name varchar(100) not null
+);
+
+create table employee (
+    id serial primary key,
+    department_id int references department(id),
+    chief_id int references employee(id),
+    name varchar(100) not null,
+    salary numeric(12, 2)
+);
+
+insert into department (name) values 
+('IT'), 
+('HR'), 
+('Sales'), 
+('Security');
+
+insert into employee (department_id, chief_id, name, salary) values 
+(1, null, 'Иван Иванов (СТО)', 5000.00),
+(2, null, 'Анна Петрова (Head of Sales)', 4500.00),
+(3, null, 'Марина Соколова (HR BP)', 2500.00),
+(1, null, 'Николай Петров (QA Engineer)', 2200.00);
+
+insert into employee (department_id, chief_id, name, salary) values 
+(1, 1, 'Сергей Сидоров (Dev)', 10000.00),
+(1, 1, 'Дмитрий Кузнецов (Dev)', 5800.00),
+(2, 2, 'Елена Козлова (Sales Manager)', 2000.00),
+(1, 1, 'Алексей Смирнов (DevOps)', 3500.00),
+(1, 1, 'Андрей Волков (Frontend Dev)', 2700.00),
+(2, 2, 'Мария Сидорова (Sales Agent)', 1800.00),
+(2, 2, 'Павел Кот (Junior Sales)', 1500.00),
+(2, 2, 'Виталий Рыбаков (AM)', 2400.00),
+(3, 3, 'Евгения Морозова (Recruiter)', 1700.00),
+(3, 3, 'Олег Лис (HR Admin)', 1600.00);
+
+
+
+//1 Вывести список сотрудников, получающих заработную плату большую чем у непосредственного руководителя
+
+
+select a.*
+from employee a
+join employee b
+on b.id = a.chief_id
+and a.salary > b.salary
+
+
+
+//2 Вывести список сотрудников, получающих максимальную заработную плату в своем отделе
+
+
+select e.*
+from employee e
+join (
+Select department_id, max(salary) as max_sal
+from employee
+group by department_id
+) as sub
+on e.department_id = sub.department_id 
+and e.salary = sub.max_sal
+order by  department_id desc;
+
+
+
+//3  Вывести список ID отделов, количество сотрудников в которых не превышает 3 человек
+
+
+select department_id
+from employee 
+group by department_id
+having count(*) <=3
+        
+
+
+
+//4 Вывести список сотрудников, не имеющих назначенного руководителя, работающего в том-же отделе
+
+
+select e1.*
+from employee e1
+left join employee e2
+    on e2.id = e1.chief_id
+   and e2.department_id = e1.department_id
+where e2.id is null;
