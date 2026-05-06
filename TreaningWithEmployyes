@@ -125,3 +125,11 @@ join employee b on b.id = a.chief_id
 join department d on d.id = a.department_id
 and a.salary > b.salary
 
+
+
+--8 номер внутри отдела при помощи оконной функции
+select 
+    department_id,
+    row_number() over(partition by department_id order by id) as num_in_dept,
+    name
+from employee;
